@@ -1,4 +1,4 @@
-Laravel Server组件
+Laravel WebSocketServer组件
 =======
 
 ## 安装
@@ -6,5 +6,5 @@ Laravel Server组件
 运行下面命令进行安装
 
 ```sh
-composer require peibin/laravel-server
+composer require peibin/laravel-websocket-server
 ```
