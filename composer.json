@@ -1,0 +1,45 @@
+{
+  "name": "peibin/laravel-websocket-server",
+  "description": "Peibin websocket server component for Laravel.",
+  "license": "MIT",
+  "keywords": [
+    "php",
+    "swoole",
+    "laravel",
+    "server"
+  ],
+  "authors": [
+    {
+      "name": "Peibin Zhu",
+      "email": "zhupeibin1207@gmail.com"
+    }
+  ],
+  "require": {
+    "php": ">=8.0",
+    "laravel/framework": "^9.0",
+    "peibin/laravel-context": "^1.0",
+    "peibin/laravel-server": "^1.0",
+    "peibin/laravel-utils": "^1.4"
+  },
+  "autoload": {
+    "psr-4": {
+      "PeibinLaravel\\WebSocketServer\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "PeibinLaravelTest\\WebSocketServer\\": "tests/"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "PeibinLaravel\\WebSocketServer\\WebSocketServerServiceProvider"
+      ]
+    }
+  },
+  "config": {
+    "sort-packages": true
+  },
+  "prefer-stable": true
+}
