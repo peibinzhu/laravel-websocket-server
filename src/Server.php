@@ -9,7 +9,7 @@ use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Http\Request as IlluminateRequest;
 use Illuminate\Routing\Router;
 use PeibinLaravel\Context\Context;
-use PeibinLaravel\Contract\StdoutLoggerInterface;
+use PeibinLaravel\Contracts\StdoutLoggerInterface;
 use PeibinLaravel\Server\Actions\ConvertSwooleRequestToSymfonyRequest;
 use PeibinLaravel\Server\Contracts\CoreMiddlewareInterface;
 use PeibinLaravel\Server\Contracts\MiddlewareInitializerInterface;

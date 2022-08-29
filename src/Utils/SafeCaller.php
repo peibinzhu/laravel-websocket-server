@@ -6,7 +6,7 @@ namespace PeibinLaravel\WebSocketServer\Utils;
 
 use Closure;
 use Illuminate\Contracts\Container\Container;
-use PeibinLaravel\Contract\StdoutLoggerInterface;
+use PeibinLaravel\Contracts\StdoutLoggerInterface;
 use Psr\Log\LogLevel;
 use Throwable;
 

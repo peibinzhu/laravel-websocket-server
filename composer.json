@@ -19,7 +19,7 @@
     "laravel/framework": "^9.0",
     "peibin/laravel-context": "^1.0",
     "peibin/laravel-server": "^1.0",
-    "peibin/laravel-utils": "^1.4"
+    "peibin/laravel-utils": "^1.5"
   },
   "autoload": {
     "psr-4": {
