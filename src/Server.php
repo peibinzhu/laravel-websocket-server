@@ -21,6 +21,7 @@ use PeibinLaravel\WebSocketServer\Collectors\FdCollector;
 use PeibinLaravel\WebSocketServer\Context as WsContext;
 use PeibinLaravel\WebSocketServer\Exceptions\WebSocketHandeShakeException;
 use PeibinLaravel\WebSocketServer\Utils\SafeCaller;
+use Swoole\Coroutine;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
 use Swoole\Server as SwooleServer;
@@ -179,7 +180,7 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
     protected function deferOnOpen($request, string $class, SwooleServer|WebSocketServer $server, int $fd): void
     {
         $instance = $this->container->get($class);
-        $server->defer(static function () use ($request, $instance, $server, $fd) {
+        Coroutine::defer(static function () use ($request, $instance, $server, $fd) {
             Context::set(WsContext::FD, $fd);
             if ($instance instanceof OnOpenInterface) {
                 $instance->onOpen($server, $request);
@@ -196,7 +197,7 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
         }
 
         Context::set(SymfonyRequest::class, $symfonyRequest);
-        WsContext::set(SymfonyRequest::class, $symfonyRequest);
+        // WsContext::set(SymfonyRequest::class, $symfonyRequest);
         return $symfonyRequest;
     }
 

@@ -8,7 +8,11 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\RouteCollection;
 use Illuminate\Routing\Router;
 use Illuminate\Support\ServiceProvider;
+use PeibinLaravel\SwooleEvent\Events\AfterWorkerStart;
+use PeibinLaravel\SwooleEvent\Events\OnPipeMessage;
 use PeibinLaravel\Utils\Providers\RegisterProviderConfig;
+use PeibinLaravel\WebSocketServer\Listeners\InitSenderListener;
+use PeibinLaravel\WebSocketServer\Listeners\OnPipeMessageListener;
 
 class WebSocketServerServiceProvider extends ServiceProvider
 {
@@ -17,12 +21,22 @@ class WebSocketServerServiceProvider extends ServiceProvider
     public function __invoke(): array
     {
         $this->registerRoute();
-        return [];
+
+        $this->app->singleton(Sender::class);
+
+        return [
+            'listeners' => [
+                AfterWorkerStart::class => InitSenderListener::class,
+                OnPipeMessage::class    => OnPipeMessageListener::class,
+            ],
+        ];
     }
 
     private function registerRoute()
     {
         Router::macro('addServer', function (string $serverName, callable $callback) use (&$coll) {
+            /** @var Router $this */
+
             // Backup http route collection.
             $httpRouters = $this->getRoutes();
 
