@@ -18,6 +18,7 @@
     "php": ">=8.0",
     "laravel/framework": "^9.0",
     "peibin/laravel-context": "^1.0",
+    "peibin/laravel-coordinator": "^1.0",
     "peibin/laravel-server": "^1.0",
     "peibin/laravel-utils": "^1.6"
   },

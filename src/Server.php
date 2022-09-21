@@ -10,6 +10,8 @@ use Illuminate\Http\Request as IlluminateRequest;
 use Illuminate\Routing\Router;
 use PeibinLaravel\Context\Context;
 use PeibinLaravel\Contracts\StdoutLoggerInterface;
+use PeibinLaravel\Coordinator\Constants;
+use PeibinLaravel\Coordinator\CoordinatorManager;
 use PeibinLaravel\Server\Actions\ConvertSwooleRequestToSymfonyRequest;
 use PeibinLaravel\Server\Contracts\CoreMiddlewareInterface;
 use PeibinLaravel\Server\Contracts\MiddlewareInitializerInterface;
@@ -62,6 +64,8 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
     public function onHandShake(Request $request, Response $response): void
     {
         try {
+            CoordinatorManager::until(Constants::WORKER_START)->yield();
+
             $fd = $this->getFd($response);
             Context::set(WsContext::FD, $fd);
             $security = $this->container->get(Security::class);
