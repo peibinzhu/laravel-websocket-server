@@ -12,6 +12,7 @@ use PeibinLaravel\Context\Context;
 use PeibinLaravel\Contracts\StdoutLoggerInterface;
 use PeibinLaravel\Coordinator\Constants;
 use PeibinLaravel\Coordinator\CoordinatorManager;
+use PeibinLaravel\Coroutine\Coroutine;
 use PeibinLaravel\Server\Actions\ConvertSwooleRequestToSymfonyRequest;
 use PeibinLaravel\Server\Contracts\CoreMiddlewareInterface;
 use PeibinLaravel\Server\Contracts\MiddlewareInitializerInterface;
@@ -19,11 +20,10 @@ use PeibinLaravel\Server\Contracts\OnCloseInterface;
 use PeibinLaravel\Server\Contracts\OnHandShakeInterface;
 use PeibinLaravel\Server\Contracts\OnMessageInterface;
 use PeibinLaravel\Server\Contracts\OnOpenInterface;
+use PeibinLaravel\Support\SafeCaller;
 use PeibinLaravel\WebSocketServer\Collectors\FdCollector;
 use PeibinLaravel\WebSocketServer\Context as WsContext;
 use PeibinLaravel\WebSocketServer\Exceptions\WebSocketHandeShakeException;
-use PeibinLaravel\WebSocketServer\Utils\SafeCaller;
-use Swoole\Coroutine;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
 use Swoole\Server as SwooleServer;
@@ -160,7 +160,7 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
         $this->logger->debug(sprintf('WebSocket: fd[%d] closed.', $fd));
 
         Context::set(WsContext::FD, $fd);
-        $this->getServer()->defer(function () use ($fd) {
+        Coroutine::defer(function () use ($fd) {
             // Move those functions to defer, because onClose may throw exceptions.
             FdCollector::del($fd);
             WsContext::release($fd);
@@ -181,7 +181,7 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
         return $this->container->get(FdGetter::class)->get($response);
     }
 
-    protected function deferOnOpen($request, string $class, SwooleServer|WebSocketServer $server, int $fd): void
+    protected function deferOnOpen($request, string $class, SwooleServer | WebSocketServer $server, int $fd): void
     {
         $instance = $this->container->get($class);
         Coroutine::defer(static function () use ($request, $instance, $server, $fd) {

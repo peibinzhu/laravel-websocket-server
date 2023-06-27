@@ -4,32 +4,58 @@ declare(strict_types=1);
 
 namespace PeibinLaravel\WebSocketServer;
 
+use Illuminate\Contracts\Config\Repository;
+use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Http\Request;
 use Illuminate\Routing\RouteCollection;
 use Illuminate\Routing\Router;
 use Illuminate\Support\ServiceProvider;
 use PeibinLaravel\SwooleEvent\Events\AfterWorkerStart;
 use PeibinLaravel\SwooleEvent\Events\OnPipeMessage;
-use PeibinLaravel\Utils\Providers\RegisterProviderConfig;
 use PeibinLaravel\WebSocketServer\Listeners\InitSenderListener;
 use PeibinLaravel\WebSocketServer\Listeners\OnPipeMessageListener;
 
 class WebSocketServerServiceProvider extends ServiceProvider
 {
-    use RegisterProviderConfig;
-
-    public function __invoke(): array
+    public function boot()
     {
-        $this->registerRoute();
-
-        $this->app->singleton(Sender::class);
-
-        return [
-            'listeners' => [
-                AfterWorkerStart::class => InitSenderListener::class,
-                OnPipeMessage::class    => OnPipeMessageListener::class,
-            ],
+        $dependencies = [
+            Sender::class => Sender::class,
         ];
+        $this->registerDependencies($dependencies);
+
+        $listeners = [
+            AfterWorkerStart::class => InitSenderListener::class,
+            OnPipeMessage::class    => OnPipeMessageListener::class,
+        ];
+        $this->registerListeners($listeners);
+
+        $this->registerRoute();
+    }
+
+    private function registerDependencies(array $dependencies)
+    {
+        $config = $this->app->get(Repository::class);
+        foreach ($dependencies as $abstract => $concrete) {
+            $concreteStr = is_string($concrete) ? $concrete : gettype($concrete);
+            if (is_string($concrete) && method_exists($concrete, '__invoke')) {
+                $concrete = function () use ($concrete) {
+                    return $this->app->call($concrete . '@__invoke');
+                };
+            }
+            $this->app->singleton($abstract, $concrete);
+            $config->set(sprintf('dependencies.%s', $abstract), $concreteStr);
+        }
+    }
+
+    private function registerListeners(array $listeners)
+    {
+        $dispatcher = $this->app->get(Dispatcher::class);
+        foreach ($listeners as $event => $_listeners) {
+            foreach ((array)$_listeners as $listener) {
+                $dispatcher->listen($event, $listener);
+            }
+        }
     }
 
     private function registerRoute()

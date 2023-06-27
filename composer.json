@@ -6,7 +6,7 @@
     "php",
     "swoole",
     "laravel",
-    "server"
+    "websocket"
   ],
   "authors": [
     {
@@ -17,10 +17,10 @@
   "require": {
     "php": ">=8.0",
     "laravel/framework": "^9.0",
-    "peibin/laravel-context": "^1.0",
-    "peibin/laravel-coordinator": "^1.0",
-    "peibin/laravel-server": "^1.0",
-    "peibin/laravel-utils": "^1.6"
+    "peibin/laravel-context": "^2.0",
+    "peibin/laravel-coordinator": "^2.0",
+    "peibin/laravel-server": "^2.0",
+    "peibin/laravel-support": "^1.0"
   },
   "autoload": {
     "psr-4": {

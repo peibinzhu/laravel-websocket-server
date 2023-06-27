@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace PeibinLaravel\WebSocketServer\Listeners;
 
 use Illuminate\Contracts\Container\Container;
+use PeibinLaravel\Contracts\ExceptionFormatter\FormatterInterface;
 use PeibinLaravel\Contracts\StdoutLoggerInterface;
 use PeibinLaravel\SwooleEvent\Events\OnPipeMessage;
-use PeibinLaravel\Utils\Contracts\Formatter;
 use PeibinLaravel\WebSocketServer\Sender;
 use PeibinLaravel\WebSocketServer\SenderPipeMessage;
 use Throwable;
@@ -31,7 +31,7 @@ class OnPipeMessageListener
                 [$fd, $method] = $this->sender->getFdAndMethodFromProxyMethod($message->name, $message->arguments);
                 $this->sender->proxy($fd, $method, $message->arguments);
             } catch (Throwable $exception) {
-                $formatter = $this->container->get(Formatter::class);
+                $formatter = $this->container->get(FormatterInterface::class);
                 $this->logger->warning($formatter->format($exception));
             }
         }
